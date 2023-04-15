@@ -1,21 +1,19 @@
-# explain the below code
-data "aws_caller_identity" "current" {}
-# Module Resources:
-resource "aws_lambda_function" "lambda" {
-  function_name    = var.function_name
-  role             = aws_iam_role.lambda_execution.arn
-  runtime          = var.runtime
-  handler          = var.lambda_handler
-  filename         = data.archive_file.lambda_function.output_path
-  source_code_hash = filebase64sha256(data.archive_file.lambda_function.output_path)
+resource "aws_lambda_function" "tag_untagged_instances" {
+  function_name = var.function_name
+  role         = aws_iam_role.lambda_execution.arn
+  runtime      = var.runtime
+  handler      = var.lambda_handler
+  filename     = "lambda_function.zip"
+  source_code_hash = filebase64sha256("lambda_function.zip")
 
   environment {
     variables = {
-      KEY = var.instance_tag_key
-      VALUE = var.instance_tag_value
+      KEY   = var.key
+      VALUE = var.value
     }
   }
 }
+
 
 resource "aws_iam_role" "lambda_execution" {
   name = var.iam_role_name
@@ -32,9 +30,6 @@ resource "aws_iam_role" "lambda_execution" {
       }
     ]
   })
-  tags = {
-    Name = "Lambda Tag role"
-  }
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_execution" {
@@ -50,9 +45,9 @@ resource "aws_lambda_permission" "allow_cloudwatch_logs" {
   source_arn    = "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:*"
 }
 
-
+data "aws_caller_identity" "current" {}
 locals {
-  lambda_function_zip_file = join("/", [path.root, "lambda_function.zip"])
+  lambda_function_zip_file = pathjoin(path.root, "lambda_function.zip")
 }
 
 data "archive_file" "lambda_function" {
