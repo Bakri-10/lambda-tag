@@ -1,4 +1,4 @@
-# lambda-tag
+
 # AWS Lambda Module
 
 This Terraform module creates an AWS Lambda function with an IAM role and CloudWatch Logs permissions.
@@ -34,7 +34,7 @@ Replace the your-username with your own GitHub username.
     source_arn (required): The Amazon Resource Name (ARN) of the CloudWatch Logs log group where the function's logs are sent.
     lambda_function_zip_file (required): The path to the .zip file containing the Lambda function code.
 
-##Outputs
+## Outputs
 
     function_name: The name of the Lambda function created by the module.
     function_arn: The ARN of the Lambda function created by the module.
