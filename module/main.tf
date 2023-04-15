@@ -47,7 +47,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_logs" {
 
 data "aws_caller_identity" "current" {}
 locals {
-  lambda_function_zip_file = pathjoin(path.root, "lambda_function.zip")
+  lambda_function_zip_file = join("/", [path.root, "lambda_function.zip"])
 }
 
 data "archive_file" "lambda_function" {
