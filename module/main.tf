@@ -27,10 +27,20 @@ resource "aws_iam_role" "lambda_execution" {
         Principal = {
           Service = "lambda.amazonaws.com"
         }
+      },
+      {
+        Sid = "EC2Permissions"
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeInstances",
+          "ec2:CreateTags"
+        ]
+        Resource = "*"
       }
     ]
   })
 }
+
 
 resource "aws_iam_role_policy_attachment" "lambda_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -46,6 +56,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_logs" {
 }
 
 data "aws_caller_identity" "current" {}
+
 locals {
   lambda_function_zip_file = join("/", [path.root, "lambda_function.zip"])
 }
