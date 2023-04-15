@@ -1,4 +1,4 @@
-explain the below code
+# explain the below code
 data "aws_caller_identity" "current" {}
 # Module Resources:
 resource "aws_lambda_function" "lambda" {
