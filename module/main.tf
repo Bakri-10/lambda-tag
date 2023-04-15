@@ -1,10 +1,10 @@
 resource "aws_lambda_function" "tag_untagged_instances" {
-  function_name    = var.function_name
-  role             = aws_iam_role.lambda_execution.arn
-  runtime          = var.runtime
-  handler          = var.lambda_handler
-  filename         = "lambda_function.zip"
-  source_code_hash = filebase64sha256("${data.archive_file.lambda_function.output_path}")
+  function_name = var.function_name
+  role         = aws_iam_role.lambda_execution.arn
+  runtime      = var.runtime
+  handler      = var.lambda_handler
+  filename     = "lambda_function.zip"
+  source_code_hash = filebase64sha256("lambda_function.zip")
 
   environment {
     variables = {
@@ -14,31 +14,33 @@ resource "aws_lambda_function" "tag_untagged_instances" {
   }
 }
 
+
 resource "aws_iam_role" "lambda_execution" {
   name = var.iam_role_name
 
   assume_role_policy = jsonencode({
-    Version   = "2012-10-17"
+    Version = "2012-10-17",
     Statement = [
       {
-        Action    = "sts:AssumeRole"
-        Effect    = "Allow"
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
         Principal = {
           Service = "lambda.amazonaws.com"
         }
       },
       {
-        Sid     = "EC2Permissions"
-        Effect  = "Allow"
-        Action  = [
+        Sid = "EC2Permissions",
+        Effect = "Allow",
+        Action = [
           "ec2:DescribeInstances",
-          "ec2:CreateTags",
-        ]
+          "ec2:CreateTags"
+        ],
         Resource = "*"
-      },
+      }
     ]
   })
 }
+
 
 resource "aws_iam_role_policy_attachment" "lambda_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
