@@ -32,6 +32,24 @@ resource "aws_iam_role" "lambda_execution" {
   })
 }
 
+resource "aws_iam_role_policy" "ec2_access" {
+  name = "ec2-access"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "ec2:*"
+        Effect = "Allow"
+        Resource = "*"
+      }
+    ]
+  })
+
+  role = aws_iam_role.lambda_execution.id
+}
+
+
 resource "aws_iam_role_policy_attachment" "lambda_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
   role       = aws_iam_role.lambda_execution.name
