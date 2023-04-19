@@ -1,4 +1,4 @@
-resource "aws_lambda_function" "tag_untagged_instances" {
+resource "aws_lambda_function" "tag_untagged_efs" {
   function_name = var.function_name
   role         = aws_iam_role.lambda_execution.arn
   runtime      = var.runtime
@@ -32,22 +32,6 @@ resource "aws_iam_role" "lambda_execution" {
   })
 }
 
-resource "aws_iam_role_policy" "ec2_access" {
-  name = "ec2-access"
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "ec2:*"
-        Effect = "Allow"
-        Resource = "*"
-      }
-    ]
-  })
-
-  role = aws_iam_role.lambda_execution.id
-}
 
 resource "aws_iam_role_policy" "efs_access" {
   name = "efs-access"
@@ -75,7 +59,7 @@ resource "aws_iam_role_policy_attachment" "lambda_execution" {
 resource "aws_lambda_permission" "allow_cloudwatch_logs" {
   statement_id  = "AllowExecutionFromCloudWatchLogs"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.tag_untagged_instances.function_name
+  function_name = aws_lambda_function.tag_untagged_efs.function_name
   principal     = "logs.${var.region}.amazonaws.com"
   source_arn    = "arn:aws:logs:${var.region}:${data.aws_caller_identity.current.account_id}:*"
 }
